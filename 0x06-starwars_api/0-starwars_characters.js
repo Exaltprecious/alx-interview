@@ -1,55 +1,44 @@
-#!/usr/bin/node
-//  A script that prints all characters of a Star Wars movie
+#!/usr/bin/python3
+"""
+Fetch and print all characters of a Star Wars movie.
+"""
 
-const request = require('request');
+import requests
 
-const movieId = process.argv[2];
-const filmEndPoint = 'https://swapi-api.hbtn.io/api/films/' + movieId;
-let people = [];
-const names = [];
 
-const reqCharacters = async () => {
-  await new Promise(resolve => request(filmEndPoint, (err, res, body) => {
-    if (err || res.statusCode !== 200) {
-      console.error('Error: ', err, '| StatusCode: ', res.statusCode);
-    } else {
-	       } else {
-      const jsonBody = JSON.parse(body);
-      people = jsonBody.characters;
-      resolve();
-    }
-  }));
-};
+def get_star_wars_characters(movie_id):
+    """
+    Fetch and print all characters from a Star Wars movie by ID.
 
-const reqNames = async () => {
-  if (people.length > 0) {
-    for (const p of people) {
-      await new Promise(resolve => request(p, (err, res, body) => {
-        if (err || res.statusCode !== 200) {
-          console.error('Error: ', err, '| StatusCode: ', res.statusCode);
-        } else {
-          const jsonBody = JSON.parse(body);
-          names.push(jsonBody.name);
-		resolve();
-        }
-      }));
-    }
-  } else {
-    console.error('Error: Got no Characters for some reason');
-  }
-};
+    Args:
+        movie_id (int): The ID of the Star Wars movie (1-6).
 
-const getCharNames = async () => {
-  await reqCharacters();
-  await reqNames();
+    Returns:
+None
+    """
+    base_url = "https://swapi.dev/api/films/"
+    try:
+        response = requests.get(f"{base_url}{movie_id}/")
+        if response.status_code != 200:
+            print("Failed to fetch the movie details. Check the movie ID.")
+            return
 
-  for (const n of names) {
-    if (n === names[names.length - 1]) {
-      process.stdout.write(n);
-    } else {
-	    process.stdout.write(n + '\n');
-    }
-  }
-};
+        data = response.json()
+        print(f"Movie: {data['title']}")
+        print("Characters:")
 
-getCharNames();
+        for character_url in data['characters']:
+            character_response = requests.get(character_url)
+            if character_response.status_code == 200:
+                character_data = character_response.json()
+                print(f"-
+			{character_data['name']}")
+            else:
+                print("Failed to fetch character details.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+if __name__ == "__main__":
+    movie_id = int(input("Enter the Star Wars movie ID (1-6): "))
+    get_star_wars_characters(movie_id)
