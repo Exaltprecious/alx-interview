@@ -1,44 +1,31 @@
-#!/usr/bin/python3
-"""
-Fetch and print all characters of a Star Wars movie.
-"""
+#!/usr/bin/node
 
-import requests
+const request = require('request');
 
+const movieId = process.argv[2];
+const movieEndpoint = 'https://swapi-api.alx-tools.com/api/films/' + movieId;
 
-def get_star_wars_characters(movie_id):
-    """
-    Fetch and print all characters from a Star Wars movie by ID.
+function sendRequest (characterList, index) {
+  if (characterList.length === index) {
+    return;
+  }
 
-    Args:
-        movie_id (int): The ID of the Star Wars movie (1-6).
+  request(characterList[index], (error, response, body) => {
+    if (error) {
+	    console.log(error);
+    } else {
+      console.log(JSON.parse(body).name);
+      sendRequest(characterList, index + 1);
+    }
+  });
+}
 
-    Returns:
-None
-    """
-    base_url = "https://swapi.dev/api/films/"
-    try:
-        response = requests.get(f"{base_url}{movie_id}/")
-        if response.status_code != 200:
-            print("Failed to fetch the movie details. Check the movie ID.")
-            return
+request(movieEndpoint, (error, response, body) => {
+  if (error) {
+	  console.log(error);
+  } else {
+    const characterList = JSON.parse(body).characters;
 
-        data = response.json()
-        print(f"Movie: {data['title']}")
-        print("Characters:")
-
-        for character_url in data['characters']:
-            character_response = requests.get(character_url)
-            if character_response.status_code == 200:
-                character_data = character_response.json()
-                print(f"-
-			{character_data['name']}")
-            else:
-                print("Failed to fetch character details.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-
-if __name__ == "__main__":
-    movie_id = int(input("Enter the Star Wars movie ID (1-6): "))
-    get_star_wars_characters(movie_id)
+    sendRequest(characterList, 0);
+  }
+});
