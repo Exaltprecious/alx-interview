@@ -12,9 +12,9 @@ if __name__ == '__main__':
 
     try:
         n = int(sys.argv[1])
-    except ValueError
-    print('N must be a number')
-        exit(1)
+    except ValueError:
+        print('N must
+	exit(1)
 
     if n < 4:
         print('N must be at least 4')
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         goback = False
         # iterate thru columns
         while c < n:
-            # check is current column is safe
+	# check is current column is safe
             safe = True
             for cord in placed_queens:
                 col = cord[1]
@@ -48,7 +48,7 @@ if __name__ == '__main__':
                 continue
 
             # place queen
-            cords = [r, c]
+	    cords = [r, c]
             placed_queens.append(cords)
             # if last row, append solution and reset all to last unfinished row
             # and last safe column in that row
@@ -69,7 +69,7 @@ if __name__ == '__main__':
                 c = 0
             break
         if stop:
-            break
+
         # on fail: go back to previous row
         # and continue from last safe column + 1
         if goback:
@@ -83,7 +83,7 @@ if __name__ == '__main__':
             if r < 0:
                 break
             continue
-        r += 1
+	    r += 1
 
     for idx, val in enumerate(solutions):
         if idx == len(solutions) - 1:
